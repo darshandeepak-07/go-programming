@@ -40,6 +40,9 @@ func main() {
 	demonstrate_goroutine()
 	demonstrate_channel()
 	execute_mutex()
+	package1.PrintOddEven()
+	fmt.Println("-----------------")
+	package1.PrintUsingChannel()
 }
 
 // Empty interfaces
