@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"modules/interfaces"
 	"modules/package1"
+	"sync"
+	"time"
 )
 
 func main() {
@@ -32,6 +35,11 @@ func main() {
 	struct_eg()
 	type_assert()
 	process("Hello")
+	doTimeOut()
+	contextWithValues()
+	demonstrate_goroutine()
+	demonstrate_channel()
+	execute_mutex()
 }
 
 // Empty interfaces
@@ -228,3 +236,117 @@ func process[T any](value T) {
 		fmt.Println("Type not found")
 	}
 } 
+
+
+// Context
+// for handling timeout , deadlines
+// cancelling go routines 
+// passing metadata across the go application
+
+func doTimeOut() {
+	ctx := context.Background()
+
+	ctxWithTimeout,cancel := context.WithTimeout(ctx,5 * time.Second)
+
+	defer cancel()
+
+	done := make(chan struct{})
+
+	go func() {
+		time.Sleep(6 * time.Second)
+		close(done)
+	}()
+
+	select {
+	case <- done:
+		fmt.Println("API invoked")
+	case <- ctxWithTimeout.Done():
+		fmt.Println("APi call timed out : ",ctxWithTimeout.Err())
+	}
+}
+
+func contextWithValues() {
+	ctx := context.Background()
+
+	ctxWithValue := context.WithValue(ctx,"user","123")
+
+	if id,ok := ctxWithValue.Value("user").(string) ; ok {
+		fmt.Println("User is ",id)
+	} else {
+		fmt.Println("User not found")
+	}
+}
+
+// goroutine
+
+func demonstrate_goroutine() {
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func ()  {
+		defer wg.Done()
+
+		for i := 0 ; i < 20 ; i++ {
+			fmt.Println("From function 1 -> ",i)
+		}
+	}()
+
+	wg.Add(1)
+	go func ()  {
+		defer wg.Done()
+		for i := 0;i<20;i++ {
+			fmt.Println("From function 2 -> ",i)
+		}	
+	}()
+
+	wg.Wait()
+	fmt.Println("Process completed")
+}
+
+
+// channels
+
+func demonstrate_channel() {
+	c := make(chan int)
+
+	go func()  {
+		sum := 0
+		for i:=1 ; i<10;i++ {
+			sum += i
+		}
+		c <- sum
+	}()
+
+	result := <-c
+	fmt.Println("Result from channel ",result)
+}
+
+
+// mutex
+
+type SafeWriter struct {
+	mutex sync.Mutex
+	Numbers map[string]int
+}
+
+func (s *SafeWriter) Add(number int) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.Numbers["keyValue"] = number
+}
+
+func execute_mutex() {
+	s := SafeWriter{Numbers: make(map[string]int) }
+	var wg sync.WaitGroup
+
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+
+		go func (i int)  {
+			defer wg.Done()
+			s.Add(i)
+		}(i)
+	}
+	wg.Wait()
+	fmt.Println("Value in Map = ",s.Numbers["keyValue"])
+}
