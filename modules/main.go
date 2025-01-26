@@ -30,6 +30,7 @@ func main() {
 
 	arr_slice_make_map()
 	struct_eg()
+	type_assert()
 }
 
 // Empty interfaces
@@ -179,4 +180,37 @@ func struct_eg() {
 	}
 
 	fmt.Println(animal)
+}
+
+
+// Type assertion
+
+type Student struct {
+	Name string
+	id string
+}
+
+type School interface {
+	getStudent(id string) Student
+}
+
+func (std *Student) getStudent(id string) Student {
+	return Student{Name: "Deepak",id: "07"}
+}
+
+func (std *Student) listStudents() []Student {
+	return []Student{ {Name: "Deepak",id: "07"},{Name: "Darshan",id: "06"}}
+}
+
+func type_assert() {
+	var instance School = &Student{Name: "Deepak",id: "07"}
+
+	if value,ok := instance.(interface{ listStudents()[]Student });ok {
+		students := value.listStudents()
+
+		for  _,student := range students {
+			fmt.Println(student.id,student.Name)
+		}
+
+	}
 }
