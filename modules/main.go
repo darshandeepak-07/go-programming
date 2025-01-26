@@ -31,6 +31,7 @@ func main() {
 	arr_slice_make_map()
 	struct_eg()
 	type_assert()
+	process("Hello")
 }
 
 // Empty interfaces
@@ -214,3 +215,16 @@ func type_assert() {
 
 	}
 }
+
+// type switch
+
+func process[T any](value T) {
+	switch v:= any(value).(type) {
+	case int :
+		fmt.Println("Integer  = ",v)
+	case string :
+		fmt.Println("String = ",v)
+	default :
+		fmt.Println("Type not found")
+	}
+} 
