@@ -14,10 +14,10 @@ func main() {
 
 	package1.Hello_Package1()
 
-	rect := interfaces.Rectangle {Width: 34.5,Height: 23.6}
+	rect := interfaces.Rectangle{Width: 34.5, Height: 23.6}
 
-	fmt.Println("Area = ",rect.Area())
-	fmt.Println("Perimenter = ",rect.Perimeter())
+	fmt.Println("Area = ", rect.Area())
+	fmt.Println("Perimenter = ", rect.Perimeter())
 
 	printValue("ed")
 	printValue(23)
@@ -26,7 +26,7 @@ func main() {
 	printType("deepak")
 	printType(24)
 
-	doc := Document {Title: "Deepak Darshan"}
+	doc := Document{Title: "Deepak Darshan"}
 	image := Image{FileName: "abc.png"}
 	printDocumentAndImage(doc)
 	printDocumentAndImage(image)
@@ -43,21 +43,22 @@ func main() {
 	package1.PrintOddEven()
 	fmt.Println("-----------------")
 	package1.PrintUsingChannel()
+	package1.Buffer_test1()
 }
 
 // Empty interfaces
 
 func printValue(value interface{}) {
-	fmt.Println("Value = ",value)
+	fmt.Println("Value = ", value)
 }
 
 // type assertion in interfaces
 
 func printType(i interface{}) {
-	value,isTypeMatched := i.(string)
+	value, isTypeMatched := i.(string)
 
 	if isTypeMatched {
-		fmt.Println("String value = ",value)
+		fmt.Println("String value = ", value)
 	} else {
 		fmt.Println("Not a string")
 	}
@@ -69,16 +70,16 @@ func getType(i interface{}) {
 
 	switch v := i.(type) {
 
-	case string : 
-		fmt.Println("String = ",v)
+	case string:
+		fmt.Println("String = ", v)
 
-	case int :
-		fmt.Println("Integer = ",v)
-	
-	case float64 :
-		fmt.Println("FLoat64 = ",v)
-	
-	default :
+	case int:
+		fmt.Println("Integer = ", v)
+
+	case float64:
+		fmt.Println("FLoat64 = ", v)
+
+	default:
 		fmt.Println("Type Unknown")
 	}
 }
@@ -109,18 +110,18 @@ func printDocumentAndImage(p Printer) {
 }
 
 func arr_slice_make_map() {
-	arr := [5]int{1,2,3,4,5}
+	arr := [5]int{1, 2, 3, 4, 5}
 	fmt.Println(arr)
 
 	// Empty array
 	var em_ar [4]int
-	fmt.Println("Empty array = ",em_ar)
+	fmt.Println("Empty array = ", em_ar)
 	em_ar[0] = 5
 	em_ar[2] = 10
-	fmt.Println("array = ",em_ar)
+	fmt.Println("array = ", em_ar)
 
-	for i,val := range arr {
-		fmt.Printf("Index %d Value %d \n",i,val)
+	for i, val := range arr {
+		fmt.Printf("Index %d Value %d \n", i, val)
 	}
 
 	slice1 := arr[0:4]
@@ -137,13 +138,13 @@ func arr_slice_make_map() {
 
 	// creating slice with make()
 
-	nums := make([]int,0,10)
+	nums := make([]int, 0, 10)
 	fmt.Println(nums)
 
-	for i:=0;i<6;i++ {
-		 // nums[i] = i -> will return index out of range
-		 nums = append(nums, i) // will return a new slice when capacity is reached
-		 fmt.Printf("Length : %d Capacity %d \n",len(nums),cap(nums))
+	for i := 0; i < 6; i++ {
+		// nums[i] = i -> will return index out of range
+		nums = append(nums, i) // will return a new slice when capacity is reached
+		fmt.Printf("Length : %d Capacity %d \n", len(nums), cap(nums))
 	}
 
 	fmt.Println(nums)
@@ -158,48 +159,46 @@ func arr_slice_make_map() {
 	capital["TamilNadu"] = "Chennai"
 	capital["Karnataka"] = "Bangalore"
 
-	for key,val := range capital {
-		fmt.Printf("Key = %s and Value = %s \n",key,val)
+	for key, val := range capital {
+		fmt.Printf("Key = %s and Value = %s \n", key, val)
 	}
 
 	// Check if key exists
 
-	value,exist := capital["Kerala"]
+	value, exist := capital["Kerala"]
 
 	if exist {
-		fmt.Println("value exist ",value)
+		fmt.Println("value exist ", value)
 	} else {
 		fmt.Println("Value does not exist")
 	}
 
 	// Delete a key
-	delete(capital,"Karnataka")
+	delete(capital, "Karnataka")
 	fmt.Println(capital)
 
 	// makes() is used to initialise maps,slice and channels
-} 
-
+}
 
 func struct_eg() {
 	// Anonymous struct
 
 	animal := struct {
-		Name string
+		Name           string
 		isDomesticated bool
-	} {
-		Name: "Lion",
+	}{
+		Name:           "Lion",
 		isDomesticated: false,
 	}
 
 	fmt.Println(animal)
 }
 
-
 // Type assertion
 
 type Student struct {
 	Name string
-	id string
+	id   string
 }
 
 type School interface {
@@ -207,21 +206,21 @@ type School interface {
 }
 
 func (std *Student) getStudent(id string) Student {
-	return Student{Name: "Deepak",id: "07"}
+	return Student{Name: "Deepak", id: "07"}
 }
 
 func (std *Student) listStudents() []Student {
-	return []Student{ {Name: "Deepak",id: "07"},{Name: "Darshan",id: "06"}}
+	return []Student{{Name: "Deepak", id: "07"}, {Name: "Darshan", id: "06"}}
 }
 
 func type_assert() {
-	var instance School = &Student{Name: "Deepak",id: "07"}
+	var instance School = &Student{Name: "Deepak", id: "07"}
 
-	if value,ok := instance.(interface{ listStudents()[]Student });ok {
+	if value, ok := instance.(interface{ listStudents() []Student }); ok {
 		students := value.listStudents()
 
-		for  _,student := range students {
-			fmt.Println(student.id,student.Name)
+		for _, student := range students {
+			fmt.Println(student.id, student.Name)
 		}
 
 	}
@@ -230,26 +229,25 @@ func type_assert() {
 // type switch
 
 func process[T any](value T) {
-	switch v:= any(value).(type) {
-	case int :
-		fmt.Println("Integer  = ",v)
-	case string :
-		fmt.Println("String = ",v)
-	default :
+	switch v := any(value).(type) {
+	case int:
+		fmt.Println("Integer  = ", v)
+	case string:
+		fmt.Println("String = ", v)
+	default:
 		fmt.Println("Type not found")
 	}
-} 
-
+}
 
 // Context
 // for handling timeout , deadlines
-// cancelling go routines 
+// cancelling go routines
 // passing metadata across the go application
 
 func doTimeOut() {
 	ctx := context.Background()
 
-	ctxWithTimeout,cancel := context.WithTimeout(ctx,5 * time.Second)
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
 
 	defer cancel()
 
@@ -261,20 +259,20 @@ func doTimeOut() {
 	}()
 
 	select {
-	case <- done:
+	case <-done:
 		fmt.Println("API invoked")
-	case <- ctxWithTimeout.Done():
-		fmt.Println("APi call timed out : ",ctxWithTimeout.Err())
+	case <-ctxWithTimeout.Done():
+		fmt.Println("APi call timed out : ", ctxWithTimeout.Err())
 	}
 }
 
 func contextWithValues() {
 	ctx := context.Background()
 
-	ctxWithValue := context.WithValue(ctx,"user","123")
+	ctxWithValue := context.WithValue(ctx, "user", "123")
 
-	if id,ok := ctxWithValue.Value("user").(string) ; ok {
-		fmt.Println("User is ",id)
+	if id, ok := ctxWithValue.Value("user").(string); ok {
+		fmt.Println("User is ", id)
 	} else {
 		fmt.Println("User not found")
 	}
@@ -286,49 +284,47 @@ func demonstrate_goroutine() {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
-	go func ()  {
+	go func() {
 		defer wg.Done()
 
-		for i := 0 ; i < 20 ; i++ {
-			fmt.Println("From function 1 -> ",i)
+		for i := 0; i < 20; i++ {
+			fmt.Println("From function 1 -> ", i)
 		}
 	}()
 
 	wg.Add(1)
-	go func ()  {
+	go func() {
 		defer wg.Done()
-		for i := 0;i<20;i++ {
-			fmt.Println("From function 2 -> ",i)
-		}	
+		for i := 0; i < 20; i++ {
+			fmt.Println("From function 2 -> ", i)
+		}
 	}()
 
 	wg.Wait()
 	fmt.Println("Process completed")
 }
 
-
 // channels
 
 func demonstrate_channel() {
 	c := make(chan int)
 
-	go func()  {
+	go func() {
 		sum := 0
-		for i:=1 ; i<10;i++ {
+		for i := 1; i < 10; i++ {
 			sum += i
 		}
 		c <- sum
 	}()
 
 	result := <-c
-	fmt.Println("Result from channel ",result)
+	fmt.Println("Result from channel ", result)
 }
-
 
 // mutex
 
 type SafeWriter struct {
-	mutex sync.Mutex
+	mutex   sync.Mutex
 	Numbers map[string]int
 }
 
@@ -339,17 +335,17 @@ func (s *SafeWriter) Add(number int) {
 }
 
 func execute_mutex() {
-	s := SafeWriter{Numbers: make(map[string]int) }
+	s := SafeWriter{Numbers: make(map[string]int)}
 	var wg sync.WaitGroup
 
 	for i := 0; i < 100; i++ {
 		wg.Add(1)
 
-		go func (i int)  {
+		go func(i int) {
 			defer wg.Done()
 			s.Add(i)
 		}(i)
 	}
 	wg.Wait()
-	fmt.Println("Value in Map = ",s.Numbers["keyValue"])
+	fmt.Println("Value in Map = ", s.Numbers["keyValue"])
 }
