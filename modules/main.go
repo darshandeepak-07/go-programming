@@ -44,6 +44,9 @@ func main() {
 	fmt.Println("-----------------")
 	package1.PrintUsingChannel()
 	package1.Buffer_test1()
+	package1.Buffered_Writer()
+	package1.Buffered_Reader()
+	package1.Chan_buffer1()
 }
 
 // Empty interfaces
