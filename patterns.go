@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"sync"
@@ -10,24 +11,30 @@ import (
 func main() {
 	fmt.Println("Concurrency patterns")
 
-	channel := generateChannel("hello")
+	// channel := generateChannel("hello")
 
-	for i := 0; i < 5; i++ {
-		fmt.Println(<-channel)
-	}
+	// for i := 0; i < 5; i++ {
+	// 	fmt.Println(<-channel)
+	// }
 
 	// Fan in pattern
-	fanInChannel := fanIn(generateChannel("hi"), generateChannel("hello"))
+	//fanInChannel := fanIn(generateChannel("hi"), generateChannel("hello"))
 
-	for i := 0; i < 5; i++ {
-		fmt.Println(<-fanInChannel)
-	}
+	// for i := 0; i < 5; i++ {
+	// 	fmt.Println(<-fanInChannel)
+	// }
 
 	// worker pools
 	//compute([]int{1, 2, 3, 4, 5, 6}, 3, 10)
 
 	// fan-in / fan-out
-	computeResult()
+	//computeResult()
+
+	//doSemaphoreExecution()
+
+	doTimeoutExecution()
+
+	doTImeoutWithCOntext()
 }
 
 // Generator Pattern - returns a channel
@@ -166,4 +173,95 @@ func fanInChannel(channels ...chan int) <-chan int {
 		close(out)
 	}()
 	return out
+}
+
+// Semaphore pattern
+
+func doSemaphoreExecution() {
+	var wg sync.WaitGroup
+
+	sem := make(chan struct{}, 5)
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go accessDatabase(i+1, sem, &wg)
+	}
+
+	wg.Wait()
+	fmt.Println("All 10 goroutines completed their task")
+}
+
+// A function simulating database access
+func accessDatabase(id int, sem chan struct{}, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	sem <- struct{}{}
+	fmt.Printf("Goroutine %d: Accessing database\n", id)
+
+	time.Sleep(time.Second * 2)
+
+	<-sem
+	fmt.Printf("Goroutine %d: Completed with database access\n", id)
+}
+
+// Timeout pattern
+
+func fetchData() string {
+	time.Sleep(5 * time.Second)
+	return "Data"
+}
+
+func fetchDataWithTimeout(timeout time.Duration) (string, error) {
+	result := make(chan string)
+	go func() {
+		result <- fetchData()
+	}()
+
+	select {
+	case res := <-result:
+		return res, nil
+	case <-time.After(timeout):
+		return "", fmt.Errorf("operation exited with timeout")
+	}
+}
+
+func doTimeoutExecution() {
+	timeout := 10 * time.Second
+
+	res, err := fetchDataWithTimeout(timeout)
+
+	if err != nil {
+		fmt.Println("Error timeout : ", err)
+	} else {
+		fmt.Println("Result timeout : ", res)
+	}
+}
+
+func fetchDataWithContext(ctx context.Context) (string, error) {
+	select {
+	case <-time.After(5 * time.Second):
+		return "Data from server", nil
+	case <-ctx.Done():
+		return "", ctx.Err()
+	}
+}
+
+func fetchWithTimeout(timeout time.Duration) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+
+	defer cancel()
+
+	return fetchDataWithContext(ctx)
+}
+
+func doTImeoutWithCOntext() {
+	timeout := 6 * time.Second
+
+	res, err := fetchWithTimeout(timeout)
+
+	if err != nil {
+		fmt.Println("Error ctx : ", err)
+	} else {
+		fmt.Println("Res ctx : ", res)
+	}
 }
